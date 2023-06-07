@@ -30,30 +30,54 @@ const findOne = (req, res) => {
 };
 
 const add = (req, res) => {
-    if (!req.body.warehouse_name || !req.body.address || !req.body.city || !req.body.country 
-        || !req.body.contact_name || !req.body.contact_position || !req.body.contact_phone || !req.body.contact_email) {
-      return res
-        .status(400)
-        .send("Please provide all info for the new warehouse in the request");
-    }
-  
-    knex("warehouses")
-      .insert(req.body)
-      .then((result) => {
-        return knex("warehouses")
-          .where({ id: result[0] })
-      })
-      .then((createdWarehouse) => {
-        res.status(201).json(createdWarehouse);
-      })
-      .catch(() => {
-        res.status(500).json({ message: "Unable to create new warehouse" });
-      })
-  };
-  
+  if (
+    !req.body.warehouse_name ||
+    !req.body.address ||
+    !req.body.city ||
+    !req.body.country ||
+    !req.body.contact_name ||
+    !req.body.contact_position ||
+    !req.body.contact_phone ||
+    !req.body.contact_email
+  ) {
+    return res
+      .status(400)
+      .send("Please provide all info for the new warehouse in the request");
+  }
+
+  knex("warehouses")
+    .insert(req.body)
+    .then((result) => {
+      return knex("warehouses").where({ id: result[0] });
+    })
+    .then((createdWarehouse) => {
+      res.status(201).json(createdWarehouse);
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Unable to create new warehouse" });
+    });
+};
+
+const remove = (req, res) => {
+  knex("warehouses")
+    .where({ id: req.params.id })
+    .del()
+    .then((result) => {
+      if (result === 0) {
+        return res.status(400).json({
+          message: `Warehouse with ID: ${req.params.id} to be deleted not found`,
+        });
+      }
+      res.sendStatus(204);
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Unable to delete warehouse" });
+    });
+};
 
 module.exports = {
   getAll,
   findOne,
-  add
+  add,
+  remove
 };
