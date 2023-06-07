@@ -1,4 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
+const validator = require("validator");
 
 const getAll = (_req, res) => {
   knex("warehouses")
@@ -76,6 +77,9 @@ const remove = (req, res) => {
 };
 
 const edit = (req, res) => {
+  
+  const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
+
   if (
     !req.body.warehouse_name ||
     !req.body.address ||
@@ -88,6 +92,18 @@ const edit = (req, res) => {
   ) {
     return res.status(400).json({
       message: `Unable to update ${req.body.warehouse_name} warehouse please ensure all fields have been filled out`,
+    });
+  }
+
+  if (!validator.isEmail(req.body.contact_email)) {
+    return res.status(400).json({
+      message: `Unable to update ${req.body.warehouse_name} please provide a valid email`,
+    });
+  }
+
+  if (formatPhone.length < 11) {
+    return res.status(400).json({
+      message: `Unable to update ${req.body.warehouse_name} please provide a valid phone number`,
     });
   }
 
