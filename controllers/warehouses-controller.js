@@ -48,7 +48,7 @@ const add = (req, res) => {
   if (!validator.isEmail(req.body.contact_email) ) {
     return res.status(400).send("Invalid email address format");
   }
-  if (!validator.isMobilePhone(req.body.contact_phone) || req.body.contact_phone.length < 10 ) {
+  if (req.body.contact_phone.length < 10 ) {
     return res.status(400).send("Invalid phone number format");
   }
 
