@@ -1,7 +1,8 @@
 const router = require('express').Router();
-const userController = require('../controllers/warehouses-controller.js');
+const warehouseController = require('../controllers/warehouses-controller.js');
 
-router.route('/').get(userController.getAll);
-
+router.route('/').get(warehouseController.getAll);
+router.route("/:id").get(warehouseController.findOne);
+router.route("/").get(warehouseController.getAll).post(warehouseController.add);
 
 module.exports = router;
