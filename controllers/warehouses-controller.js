@@ -1,5 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
-const validator = require('validator');
+const validator = require("validator");
+
+const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
 
 const getAll = (_req, res) => {
   knex("warehouses")
@@ -45,10 +47,10 @@ const add = (req, res) => {
       .status(400)
       .send("Please provide all info for the new warehouse in the request");
   }
-  if (!validator.isEmail(req.body.contact_email) ) {
+  if (!validator.isEmail(req.body.contact_email)) {
     return res.status(400).send("Invalid email address format");
   }
-  if (req.body.contact_phone.length < 10 ) {
+  if (req.body.contact_phone.length < 10) {
     return res.status(400).send("Invalid phone number format");
   }
 
@@ -83,9 +85,6 @@ const remove = (req, res) => {
 };
 
 const edit = (req, res) => {
-  
-  const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
-
   if (
     !req.body.warehouse_name ||
     !req.body.address ||
