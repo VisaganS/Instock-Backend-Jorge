@@ -7,7 +7,7 @@ router.route('/')
 
 router.route('/:id')
 .get()
-.put()
+.put(inventoriesControllers.edit)
 .delete()
 
 
