@@ -88,8 +88,6 @@ const remove = (req, res) => {
 };
 
 const edit = (req, res) => {
-  const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
-  
   if (
     !req.body.warehouse_name ||
     !req.body.address ||
