@@ -1,8 +1,9 @@
 const knex = require("knex")(require("../knexfile"));
+const validator = require("validator");
 
 const add = (req, res) => {
-  const checkNumber = Number(req.body.quantity);
-
+  const checkNumber = validator.isNumeric(req.body.quantity);
+  console.log(checkNumber);
   if (
     !req.body.warehouse_id ||
     !req.body.item_name ||
