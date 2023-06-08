@@ -1,5 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
-const validator = require('validator');
+const validator = require("validator");
+
+const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
 
 const getAll = (_req, res) => {
   knex("warehouses")
@@ -45,10 +47,10 @@ const add = (req, res) => {
       .status(400)
       .send("Please provide all info for the new warehouse in the request");
   }
-  if (!validator.isEmail(req.body.contact_email) ) {
+  if (!validator.isEmail(req.body.contact_email)) {
     return res.status(400).send("Invalid email address format");
   }
-  if (req.body.contact_phone.length < 10 ) {
+  if (req.body.contact_phone.length < 10) {
     return res.status(400).send("Invalid phone number format");
   }
 
@@ -82,9 +84,55 @@ const remove = (req, res) => {
     });
 };
 
+const edit = (req, res) => {
+  if (
+    !req.body.warehouse_name ||
+    !req.body.address ||
+    !req.body.city ||
+    !req.body.country ||
+    !req.body.contact_name ||
+    !req.body.contact_position ||
+    !req.body.contact_phone ||
+    !req.body.contact_email
+  ) {
+    return res.status(400).json({
+      message: `Unable to update ${req.body.warehouse_name} warehouse please ensure all fields have been filled out`,
+    });
+  }
+
+  if (!validator.isEmail(req.body.contact_email)) {
+    return res.status(400).json({
+      message: `Unable to update ${req.body.warehouse_name} please provide a valid email`,
+    });
+  }
+
+  if (formatPhone.length < 11) {
+    return res.status(400).json({
+      message: `Unable to update ${req.body.warehouse_name} please provide a valid phone number`,
+    });
+  }
+
+  knex("warehouses")
+    .where({ id: req.params.id })
+    .update(req.body)
+    .then(() => {
+      return knex("warehouses").where({ id: req.params.id });
+    })
+    .then((editedWarehouse) => {
+      if (editedWarehouse.length === 0) {
+        return res.status(404).json({ message: "Warehouse not found" });
+      }
+      res.status(200).json(editedWarehouse);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+};
+
 module.exports = {
   getAll,
   findOne,
   add,
-  remove
+  remove,
+  edit,
 };

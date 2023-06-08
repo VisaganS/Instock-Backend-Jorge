@@ -7,7 +7,7 @@ router.route('/')
 
 router.route("/:id")
 .get(warehouseController.findOne)
-.put()
+.put(warehouseController.edit)
 .delete(warehouseController.remove)
 
 
