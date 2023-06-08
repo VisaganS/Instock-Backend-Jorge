@@ -1,8 +1,9 @@
 const knex = require("knex")(require("../knexfile"));
 const validator = require("validator");
 
-const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
-
+const formatPhone = (phoneNum) =>{
+    return phoneNum.replace(/[^0-9]+/gi, "");
+}
 const getAll = (_req, res) => {
   knex("warehouses")
     .then((data) => {
@@ -50,8 +51,10 @@ const add = (req, res) => {
   if (!validator.isEmail(req.body.contact_email)) {
     return res.status(400).send("Invalid email address format");
   }
-  if (req.body.contact_phone.length < 10) {
-    return res.status(400).send("Invalid phone number format");
+  if (formatPhone(req.body.contact_phone).length < 11) {
+    return res.status(400).json({
+      message: `Unable to update ${req.body.warehouse_name} please provide a valid phone number`,
+    });
   }
 
   knex("warehouses")
@@ -106,7 +109,7 @@ const edit = (req, res) => {
     });
   }
 
-  if (formatPhone.length < 11) {
+  if (formatPhone(req.body.contact_phone).length < 11) {
     return res.status(400).json({
       message: `Unable to update ${req.body.warehouse_name} please provide a valid phone number`,
     });
