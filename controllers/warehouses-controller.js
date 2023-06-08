@@ -1,8 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
 const validator = require("validator");
 
-const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
-
 const getAll = (_req, res) => {
   knex("warehouses")
     .then((data) => {
@@ -85,6 +83,8 @@ const remove = (req, res) => {
 };
 
 const edit = (req, res) => {
+  const formatPhone = req.body.contact_phone.replace(/[^0-9]+/gi, "");
+  
   if (
     !req.body.warehouse_name ||
     !req.body.address ||
