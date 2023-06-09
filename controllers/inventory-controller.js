@@ -187,5 +187,5 @@ module.exports = {
   edit,
   findOne,
   getAll,
-  remove
+  remove,
 };

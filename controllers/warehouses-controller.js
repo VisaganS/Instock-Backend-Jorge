@@ -1,9 +1,9 @@
 const knex = require("knex")(require("../knexfile"));
 const validator = require("validator");
 
-const formatPhone = (phoneNum) =>{
-    return phoneNum.replace(/[^0-9]+/gi, "");
-}
+const formatPhone = (phoneNum) => {
+  return phoneNum.replace(/[^0-9]+/gi, "");
+};
 const getAll = (_req, res) => {
   knex("warehouses")
     .then((data) => {
@@ -30,6 +30,29 @@ const findOne = (req, res) => {
       res.status(500).json({
         message: `Unable to retrieve user data for user with ID: ${req.params.id}`,
       });
+    });
+};
+
+const getOneWarehouseInventory = (req, res) => {
+  knex("warehouses")
+    .join("inventories", "warehouses.id", "inventories.warehouse_id")
+    .select(
+      "inventories.id",
+      "inventories.item_name",
+      "inventories.category",
+      "inventories.status",
+      "inventories.quantity"
+    )
+    .where({ "warehouses.id": req.params.id })
+    .then((response) => {
+      if (response.length === 0) {
+        return res
+          .status(404)
+          .json({
+            message: `The warehouse with id ${req.params.id} cannot be found`,
+          });
+      }
+      return res.status(200).json(response);
     });
 };
 
@@ -138,4 +161,5 @@ module.exports = {
   add,
   remove,
   edit,
+  getOneWarehouseInventory,
 };
