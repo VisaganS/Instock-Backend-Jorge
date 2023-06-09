@@ -35,7 +35,7 @@ const findOne = (req, res) => {
 
 const getOneWarehouseInventory = (req, res) => {
   knex("warehouses")
-    .join("inventories", "warehouses.id", "inventories.warehouse_id")
+    .leftJoin("inventories", "warehouses.id", "inventories.warehouse_id")
     .select(
       "inventories.id",
       "inventories.item_name",
@@ -45,19 +45,20 @@ const getOneWarehouseInventory = (req, res) => {
     )
     .where({ "warehouses.id": req.params.id })
     .then((response) => {
-      console.log(response)
       if (response.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message: `The warehouse with id ${req.params.id} is either empty, or cannot be found`,
-          });
+        return res.status(404).json({
+          message: `The warehouse with id ${req.params.id} or cannot be found`,
+        });
+      } else if (!response[0].id) {
+        return res.status(400).json({message:`The warehouse with the id ${req.params.id} exists but is empty`} );
       }
       return res.status(200).json(response);
     })
-    .catch((error) => { 
-      return res.status(500).json({message: "An error in your request has occured."})
-    })
+    .catch((error) => {
+      return res
+        .status(500)
+        .json({ message: "An error in your request has occured." });
+    });
 };
 
 const add = (req, res) => {
