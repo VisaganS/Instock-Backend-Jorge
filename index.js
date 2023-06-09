@@ -12,6 +12,12 @@ app.use(express.json());
 app.use('/warehouses', warehouseRoutes);
 app.use('/inventories', inventoriesRoutes)
 
+app.use(cors());
+const inventoryRoutes = require('./routes/inventory-routes');
+app.use(express.json());
+
+app.use('/inventory', inventoryRoutes);
+
 app.listen(PORT, () => {
   console.log(`running at http://localhost:${PORT}`);
 });

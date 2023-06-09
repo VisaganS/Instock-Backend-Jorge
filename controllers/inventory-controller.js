@@ -1,5 +1,33 @@
 const knex = require("knex")(require("../knexfile"));
-const validator = require("validator");
+
+const getAll = (_req, res) => {
+  knex("inventories")
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => res.status(400).send(`Error retrieving Data: ${err}`))
+};
+
+const findOne = (req, res) => {
+  knex("inventories")
+    .where({ id: req.params.id })
+    .then((itemFound) => {
+      if (itemFound.length === 0) {
+        return res
+          .status(404)
+          .json({ message: `Inventory with ID: ${req.params.id} not found` });
+      }
+
+      const itemData = itemFound[0];
+
+      res.status(200).json(itemData);
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: `Unable to retrieve Inventory data for Item with ID: ${req.params.id}`,
+      });
+    });
+};
 
 const checkNumber = (quantity) => {
   return validator.isNumeric(quantity);
@@ -7,16 +35,15 @@ const checkNumber = (quantity) => {
 
 const add = (req, res) => {
   if (
-    !req.body.warehouse_id ||
     !req.body.item_name ||
     !req.body.description ||
     !req.body.category ||
     !req.body.status ||
     !req.body.quantity
   ) {
-    return res.status(400).json({
-      message: `Please ensure all fields for the inventory item are included `,
-    });
+    return res
+      .status(400)
+      .send("Please provide all info for the new Inventory in the request");
   }
 
   if (!checkNumber(req.body.quantity)) {
@@ -127,9 +154,7 @@ const edit = (req, res) => {
 module.exports = {
   add,
   edit,
+  findOne,
+  getAll
 };
 
-// else {
-//     knex("inventories").where({ id: req.params.id }).update(req.body);
-//     return res.status(200).json({ message: `Inventory item updated` });
-//   }
