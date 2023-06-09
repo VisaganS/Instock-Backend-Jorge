@@ -35,10 +35,7 @@ const add = (req, res) => {
             "The warehouse with the provided id does not exist. Please try again.",
         });
       } else {
-        knex("inventories").insert(req.body);
-        return res
-          .status(201)
-          .json({ message: "Successfully added inventory item" });
+        return;
       }
     })
     .catch((error) => {
@@ -46,6 +43,13 @@ const add = (req, res) => {
         .status(500)
         .json({ message: "An error occurred while adding the inventory item" });
     });
+
+    //If all success then inset req.body into inventories
+  knex("inventories")
+  .insert(req.body)
+  .then(() => { 
+      return res.status(201).json({ message: "Successfully added inventory item" });
+  })
 };
 
 const edit = (req, res) => {
@@ -105,12 +109,18 @@ const edit = (req, res) => {
           message: `Cannot find inventory item with id ${req.params.id}`,
         });
       } else {
-        knex("inventories").where({ id: req.params.id }).update(req.body);
-        return res.status(200).json({ message: `Inventory item updated` });
+        return;
       }
     })
     .catch((error) => {
       return res.status(500).json({ message: "An error occured" });
+    });
+
+  knex("inventories")
+    .where({ id: req.params.id })
+    .update(req.body)
+    .then(() => {
+      res.status(200).json("go baby go");
     });
 };
 
@@ -118,3 +128,8 @@ module.exports = {
   add,
   edit,
 };
+
+// else {
+//     knex("inventories").where({ id: req.params.id }).update(req.body);
+//     return res.status(200).json({ message: `Inventory item updated` });
+//   }
