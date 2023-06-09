@@ -8,6 +8,6 @@ router.route('/')
 router.route('/:id')
 .get(inventoryController.findOne)
 .put(inventoryController.edit)
-.delete()
+.delete(inventoryController.remove)
 
 module.exports = router;
