@@ -10,5 +10,7 @@ router.route("/:id")
 .put(warehouseController.edit)
 .delete(warehouseController.remove)
 
+router.route("/:id/inventories")
+.get()
 
 module.exports = router;
