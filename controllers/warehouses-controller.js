@@ -76,7 +76,7 @@ const remove = (req, res) => {
     .del()
     .then((result) => {
       if (result === 0) {
-        return res.status(400).json({
+        return res.status(404).json({
           message: `Warehouse with ID: ${req.params.id} to be deleted not found`,
         });
       }

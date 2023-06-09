@@ -165,9 +165,27 @@ const edit = (req, res) => {
     });
 };
 
+const remove = (req, res) => {
+  knex("inventories")
+    .where({ id: req.params.id })
+    .del()
+    .then((result) => {
+      if (result === 0) {
+        return res.status(404).json({
+          message: `Inventory item with ID: ${req.params.id} to be deleted not found`,
+        });
+      }
+      res.sendStatus(204);
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Unable to delete warehouse" });
+    });
+};
+
 module.exports = {
   add,
   edit,
   findOne,
   getAll,
+  remove
 };
